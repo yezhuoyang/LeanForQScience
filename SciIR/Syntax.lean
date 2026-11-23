@@ -1,4 +1,3 @@
-import Lean
 import SciIR.Basic
 
 /-!
@@ -42,10 +41,18 @@ def oneLine (s : String) : String := Id.run do
       out := out.push c
   return out
 
+/-- The words of a doc comment: the text of its node, without the two characters that close it. -/
+def docText (doc : TSyntax `Lean.Parser.Command.docComment) : String :=
+  match doc.raw[1] with
+  | .atom _ val =>
+    let chars := val.toList
+    (chars.take (chars.length - 2)).foldl String.push ""
+  | _ => ""
+
 /-- The reading of a statement: its doc comment, or nothing. -/
-def readingOf (doc : Option (TSyntax ``Lean.Parser.Command.docComment)) : MacroM (TSyntax `str) := do
+def readingOf (doc : Option (TSyntax `Lean.Parser.Command.docComment)) : MacroM (TSyntax `str) := do
   match doc with
-  | some d => return Syntax.mkStrLit (oneLine d.getDocString)
+  | some d => return Syntax.mkStrLit (oneLine (docText d))
   | none => return Syntax.mkStrLit ""
 
 /-- The name as the human sees it. -/
