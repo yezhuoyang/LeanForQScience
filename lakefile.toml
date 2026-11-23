@@ -1,0 +1,10 @@
+name = "LeanForQScience"
+version = "0.1.0"
+defaultTargets = ["SciIR", "episode"]
+
+[[lean_lib]]
+name = "SciIR"
+
+[[lean_exe]]
+name = "episode"
+root = "Main"
